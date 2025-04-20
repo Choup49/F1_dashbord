@@ -1,0 +1,504 @@
+:root {
+    /* Couleurs F1 officielles enrichies */
+    --f1-red: #e10600;
+    --f1-black: #0a0a0a;
+    --f1-dark: #1a1a1a;
+    --f1-light: #ffffff;
+    --f1-yellow: #ffd700;
+    --f1-gray: #333333;
+    --f1-blue: #00a0de;
+    
+    /* Couleurs des équipes plus vibrantes */
+    --redbull: #0600ef;
+    --mercedes: #00d2be;
+    --ferrari: #ff2800;
+    --mclaren: #ff8700;
+    --alpine: #0090ff;
+    --aston-martin: #006f62;
+    --alpha-tauri: #2b4562;
+    --alfa-romeo: #900000;
+    --haas: #787878;
+    --williams: #005aff;
+    
+    /* Nouveaux éléments UI */
+    --table-header: linear-gradient(to right, #2a2a2a, #1a1a1a);
+    --row-odd: rgba(37, 37, 37, 0.7);
+    --row-even: rgba(30, 30, 30, 0.7);
+    --border-color: rgba(68, 68, 68, 0.5);
+    --highlight: rgba(225, 6, 0, 0.2);
+    --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.light-mode {
+    --f1-black: #f5f5f5;
+    --f1-dark: #ffffff;
+    --f1-light: #333333;
+    --f1-gray: #e0e0e0;
+    --table-header: linear-gradient(to right, #f0f0f0, #e0e0e0);
+    --row-odd: rgba(249, 249, 249, 0.7);
+    --row-even: rgba(240, 240, 240, 0.7);
+    --border-color: rgba(221, 221, 221, 0.5);
+    --highlight: rgba(225, 6, 0, 0.1);
+    --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --text-shadow: none;
+}
+
+/* Base stylisée */
+body {
+    font-family: 'Titillium Web', 'Arial', sans-serif;
+    background-color: var(--f1-black);
+    color: var(--f1-light);
+    line-height: 1.6;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(225, 6, 0, 0.05) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(0, 210, 190, 0.05) 0%, transparent 20%);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+/* En-tête premium */
+header {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--f1-red);
+    position: relative;
+    text-align: center;
+}
+
+h1 {
+    color: var(--f1-light);
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    text-shadow: var(--text-shadow);
+    position: relative;
+}
+
+h1::before {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--f1-red), transparent);
+}
+
+h1 i {
+    color: var(--f1-red);
+    font-size: 1.8rem;
+}
+
+/* Contrôles améliorés */
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2rem;
+    background: rgba(30, 30, 30, 0.7);
+    padding: 1.5rem;
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+    border: 1px solid var(--border-color);
+}
+
+.session-select {
+    flex: 1;
+    min-width: 300px;
+    background: var(--f1-dark);
+    color: var(--f1-light);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.9rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.session-select:hover {
+    border-color: var(--f1-red);
+}
+
+.session-select:focus {
+    outline: none;
+    border-color: var(--f1-red);
+    box-shadow: 0 0 0 3px rgba(225, 6, 0, 0.2);
+}
+
+.session-info {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.session-status {
+    color: var(--f1-yellow);
+    font-weight: bold;
+    padding: 0.3rem 0.8rem;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.session-status::before {
+    content: "•";
+    color: var(--f1-yellow);
+    font-size: 1.5rem;
+    line-height: 0;
+}
+
+/* Tableau premium */
+.table-container {
+    overflow-x: auto;
+    margin-bottom: 3rem;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    position: relative;
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--f1-dark);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+table::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: var(--table-header);
+    z-index: 1;
+}
+
+thead {
+    position: relative;
+    z-index: 2;
+}
+
+th {
+    padding: 1.2rem 1.5rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--f1-light);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    position: relative;
+    background: none;
+    border-bottom: 2px solid var(--f1-red);
+}
+
+th:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 60%;
+    width: 1px;
+    background: var(--border-color);
+}
+
+td {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+tr {
+    background: var(--row-odd);
+}
+
+tr:nth-child(even) {
+    background: var(--row-even);
+}
+
+tr:hover td {
+    background: var(--highlight);
+}
+
+/* Cellules de pilotes */
+.driver-cell {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-weight: 500;
+}
+
+.driver-flag {
+    width: 28px;
+    height: 18px;
+    border-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    object-fit: cover;
+}
+
+.driver-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: var(--f1-gray);
+    color: var(--f1-light);
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+}
+
+/* Styles des données */
+.best-sector {
+    color: var(--f1-yellow);
+    font-weight: bold;
+    position: relative;
+    padding-left: 1.2rem;
+}
+
+.best-sector::before {
+    content: "★";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+}
+
+.improved-sector {
+    color: #4caf50;
+    position: relative;
+    padding-left: 1.2rem;
+}
+
+.improved-sector::before {
+    content: "↓";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+}
+
+.worse-sector {
+    color: #f44336;
+    position: relative;
+    padding-left: 1.2rem;
+}
+
+.worse-sector::before {
+    content: "↑";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+}
+
+.gap {
+    font-family: 'Roboto Mono', monospace;
+    color: var(--f1-light);
+    font-weight: 500;
+}
+
+.position-change {
+    animation: highlightChange 1.5s ease-out;
+}
+
+@keyframes highlightChange {
+    0% { background-color: var(--highlight); }
+    100% { background-color: transparent; }
+}
+
+/* Effets spéciaux */
+.team-border {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--team-color);
+}
+
+/* Pied de page stylisé */
+footer {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    color: var(--f1-light);
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+footer p {
+    opacity: 0.8;
+}
+
+/* Éléments d'interface */
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    gap: 1.5rem;
+    color: var(--f1-light);
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(225, 6, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--f1-red);
+    animation: spin 1s linear infinite;
+    position: relative;
+}
+
+.spinner::after {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 50%;
+    border: 4px solid transparent;
+    border-top-color: var(--f1-yellow);
+    animation: spin 1.5s linear infinite reverse;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.notification {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--f1-red);
+    color: white;
+    padding: 1.2rem 2rem;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    z-index: 1000;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: 400px;
+}
+
+.notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.notification i {
+    font-size: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    h1 {
+        font-size: 2.2rem;
+    }
+    
+    .controls {
+        padding: 1.2rem;
+    }
+    
+    th, td {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1.5rem 1rem;
+    }
+    
+    h1 {
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .controls {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .session-select {
+        width: 100%;
+    }
+    
+    .session-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.8rem;
+    }
+    
+    th, td {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.8rem;
+    }
+    
+    .driver-cell {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+    }
+    
+    .driver-number {
+        margin-right: 0;
+    }
+    
+    th, td {
+        padding: 0.7rem;
+        font-size: 0.85rem;
+    }
+}

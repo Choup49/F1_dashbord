@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Team Radio F1 | Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../Style/default_style.css">
+  <link rel="stylesheet" href="..\Style\style_team_radio.css">
+  <script src="../Script/team_radio.js"></script>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>F1 Dashboard</h2>
+    <nav class="navbar">
+      <ul class="nav-links">
+        <li><a href="Index.html">Accueil</a></li>
+        <li><a href="Strategie Course/Strat_Course.html">Stratégie Course</a></li>
+        <li><a href="Classement/Classement.html">Classement</a></li>
+        <li><a href="Classement en direct/index_cl.html">Classement en direct</a></li>
+      </ul>
+    </nav>
+    
+  </div>
+  <div class="main-content">
+    <header>
+      <h1>Team Radio F1</h1>
+      <p>Écoutez les communications radio entre les pilotes et leurs équipes en temps réel</p>
+    </header>
+    <section class="radio-section" id="team-radio">
+      <h2><i class="fas fa-headset"></i> Communications d'équipe</h2>
+      <div class="session-controls">
+        <label for="session-selector">Sélectionnez une séance :</label>
+        <select id="session-selector">
+          <option value="">Chargement des sessions...</option>
+        </select>
+        <button id="refresh-btn" class="refresh-btn" title="Actualiser les radios">
+          <i class="fas fa-sync-alt"></i> Actualiser
+        </button>
+      </div>
+      <div id="radio-container">
+        <p class="no-radios">Sélectionnez une session pour afficher les communications radio.</p>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

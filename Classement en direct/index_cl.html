@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classement F1 en Temps Réel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.5.0/css/flag-icon.min.css">
+    <link rel="stylesheet" href="../Style/style_classement_en_direct.css">
+    <script src="../Script/classement_direct.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-flag-checkered"></i> Classement F1 en Temps Réel</h1>
+            <button class="theme-toggle" aria-label="Changer le thème">
+                <i class="fas fa-moon"></i>
+            </button>
+            <div class="controls">
+                <select id="session-select" class="session-select" aria-label="Sélectionner une session">
+                    <option value="">Chargement des sessions...</option>
+                </select>
+                <div class="session-info">
+                    <span id="session-name">Aucune session sélectionnée</span>
+                    <span id="session-status" class="session-status"></span>
+                    <span id="last-update">Dernière mise à jour: -</span>
+                    <span id="data-status" class="data-status"></span>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="table-container">
+                <table id="ranking-table" aria-live="polite">
+                    <thead>
+                        <tr>
+                            <th>Pos</th>
+                            <th>Pilote</th>
+                            <th>Numéro</th>
+                            <th>Temps Total</th>
+                            <th>Écart</th>
+                            <th>S1</th>
+                            <th>S2</th>
+                            <th>S3</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ranking-body">
+                        <tr>
+                            <td colspan="8" class="loading">
+                                <div class="spinner" aria-hidden="true"></div>
+                                Sélectionnez une session pour afficher les données
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <footer>
+            <p>Données fournies par OpenF1 API</p>
+            <p>Actualisation automatique toutes les 30 secondes (pour les sessions en cours)</p>
+        </footer>
+    </div>
+
+    <div id="notification" class="notification" aria-live="assertive"></div>
+
+    
+</body>
+</html>

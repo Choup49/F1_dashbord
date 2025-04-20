@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 Live Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .driver-marker {
+            transition: transform 0.5s ease-out;
+        }
+        .fastest-lap {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-6">
+            <h1 class="text-3xl font-bold text-red-600">F1 Live Tracker</h1>
+            <div class="flex flex-wrap gap-4 mt-4">
+                <div class="session-info bg-gray-800 p-3 rounded-lg">
+                    <h2 class="text-xl" id="session-name">Session: Loading...</h2>
+                    <p id="session-time">Time: --:--:--</p>
+                    <p id="lap-number">Lap: 0/0</p>
+                </div>
+                <div class="weather-info bg-gray-800 p-3 rounded-lg">
+                    <h2 class="text-xl">Weather</h2>
+                    <p id="weather-condition">Condition: --</p>
+                    <p id="track-temp">Track: --°C</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="track-container lg:col-span-2 bg-gray-800 rounded-lg p-4 relative">
+                <svg id="track-svg" width="100%" height="600" viewBox="0 0 1000 600" class="bg-gray-900 rounded">
+                    <!-- Circuit SVG sera chargé dynamiquement -->
+                    <image id="track-image" href="" x="0" y="0" width="1000" height="600" opacity="0.7" />
+                    
+                    <!-- Trajectoires -->
+                    <g id="trajectories"></g>
+                    
+                    <!-- Marqueurs pilotes -->
+                    <g id="drivers"></g>
+                    
+                    <!-- Légende -->
+                    <g id="legend" transform="translate(20, 20)">
+                        <rect x="0" y="0" width="200" height="100" fill="rgba(0,0,0,0.7)" rx="5" />
+                        <text x="10" y="20" fill="white" font-size="12">DRS Zones: <tspan id="drs-status" fill="#00ff00">Active</tspan></text>
+                        <text x="10" y="40" fill="white" font-size="12">Flags: <tspan id="flags-status" fill="yellow">None</tspan></text>
+                    </g>
+                </svg>
+                
+                <div class="controls mt-4 flex gap-2">
+                    <button id="play-btn" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded">▶ Play</button>
+                    <button id="trajectories-btn" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded">Show Trajectories</button>
+                    <button id="zoom-fit" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded">Zoom Fit</button>
+                </div>
+            </div>
+            
+            <div class="leaderboard bg-gray-800 rounded-lg p-4">
+                <h2 class="text-xl mb-4">Live Leaderboard</h2>
+                <div id="leaderboard-list" class="space-y-2">
+                    <!-- Rempli dynamiquement -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Configuration
+        const config = {
+            updateInterval: 2000, // ms
+            showTrajectories: false,
+            currentSession: 'latest',
+            driverSize: 12,
+            fastestSize: 18
+        };
+
+        // État global
+        let state = {
+            drivers: {},
+            sessionInfo: null,
+            bestLapTime: null,
+            lastUpdate: null,
+            isPlaying: true
+        };
+
+        // Éléments DOM
+        const elements = {
+            trackSvg: d3.select("#track-svg"),
+            trackImage: document.getElementById("track-image"),
+            driversGroup: d3.select("#drivers"),
+            trajectoriesGroup: d3.select("#trajectories"),
+            leaderboardList: document.getElementById("leaderboard-list"),
+            sessionName: document.getElementById("session-name"),
+            sessionTime: document.getElementById("session-time"),
+            lapNumber: document.getElementById("lap-number"),
+            weatherCondition: document.getElementById("weather-condition"),
+            trackTemp: document.getElementById("track-temp"),
+            drsStatus: document.getElementById("drs-status"),
+            flagsStatus: document.getElementById("flags-status"),
+            playBtn: document.getElementById("play-btn"),
+            trajectoriesBtn: document.getElementById("trajectories-btn"),
+            zoomFitBtn: document.getElementById("zoom-fit")
+        };
+
+        // Couleurs des équipes (simplifiées)
+        const teamColors = {
+            'VER': '#0600EF',  // Red Bull
+            'PER': '#0600EF',
+            'LEC': '#DC0000', // Ferrari
+            'SAI': '#DC0000',
+            'HAM': '#00D2BE',  // Mercedes
+            'RUS': '#00D2BE',
+            'NOR': '#FF8700',  // McLaren
+            'PIA': '#FF8700',
+            'ALO': '#006F62',  // Aston Martin
+            'STR': '#006F62',
+            'OCO': '#0090FF', // Alpine
+            'GAS': '#0090FF',
+            'TSU': '#469BFF', // RB
+            'RIC': '#469BFF',
+            'BOT': '#900000',  // Sauber
+            'ZHO': '#900000',
+            'MAG': '#FFFFFF', // Haas
+            'HUL': '#FFFFFF',
+            'ALB': '#005AFF',  // Williams
+            'SAR': '#005AFF'
+        };
+
+        // Initialisation
+        async function init() {
+            loadTrackLayout();
+            setupEventListeners();
+            startLiveUpdates();
+        }
+
+        // Charger le layout du circuit (simplifié)
+        function loadTrackLayout() {
+            // En production, utiliser un SVG spécifique au circuit
+            elements.trackImage.href.baseVal = 'https://www.f1-fansite.com/wp-content/uploads/2023/09/singapore-circuit-map.png';
+        }
+
+        // Écouteurs d'événements
+        function setupEventListeners() {
+            elements.playBtn.addEventListener('click', togglePlay);
+            elements.trajectoriesBtn.addEventListener('click', toggleTrajectories);
+            elements.zoomFitBtn.addEventListener('click', zoomToFit);
+        }
+
+        // Basculer play/pause
+        function togglePlay() {
+            state.isPlaying = !state.isPlaying;
+            elements.playBtn.textContent = state.isPlaying ? '⏸ Pause' : '▶ Play';
+            if (state.isPlaying) startLiveUpdates();
+        }
+
+        // Basculer les trajectoires
+        function toggleTrajectories() {
+            config.showTrajectories = !config.showTrajectories;
+            elements.trajectoriesBtn.textContent = config.showTrajectories ? 
+                'Hide Trajectories' : 'Show Trajectories';
+            updateDisplay();
+        }
+
+        // Zoom pour tout voir
+        function zoomToFit() {
+            // Implémentation basique - en réel utiliser d3.zoom()
+            elements.trackSvg.attr("viewBox", "0 0 1000 600");
+        }
+
+        // Démarrer les mises à jour
+        function startLiveUpdates() {
+            if (!state.isPlaying) return;
+            
+            fetchSessionData();
+            setTimeout(startLiveUpdates, config.updateInterval);
+        }
+
+        // Récupérer les données de session
+        async function fetchSessionData() {
+            try {
+                // OpenF1 pour les données temps réel
+                const sessionRes = await fetch(`https://api.openf1.org/v1/sessions?session_key=${config.currentSession}`);
+                const sessionData = await sessionRes.json();
+                state.sessionInfo = sessionData[0];
+                
+                // Mettre à jour l'UI de session
+                updateSessionUI();
+                
+                // Récupérer les positions des pilotes
+                const positionsRes = await fetch(`https://api.openf1.org/v1/position?session_key=${config.currentSession}`);
+                const positionsData = await positionsRes.json();
+                
+                // Traiter les nouvelles positions
+                processPositionData(positionsData);
+                
+                // Mettre à jour l'affichage
+                updateDisplay();
+                
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        // Mettre à jour l'UI de session
+        function updateSessionUI() {
+            if (!state.sessionInfo) return;
+            
+            elements.sessionName.textContent = `${state.sessionInfo.session_name} - ${state.sessionInfo.location}`;
+            elements.sessionTime.textContent = `Time: ${new Date(state.sessionInfo.date_start).toLocaleTimeString()}`;
+            elements.lapNumber.textContent = `Lap: ${state.sessionInfo.lap_number}/${state.sessionInfo.total_laps}`;
+            
+            // Simuler des données météo (OpenF1 n'a pas de météo actuellement)
+            elements.weatherCondition.textContent = "Condition: Sunny";
+            elements.trackTemp.textContent = "Track: 42°C";
+        }
+
+        // Traiter les données de position
+        function processPositionData(positions) {
+            positions.forEach(pos => {
+                const driverId = pos.driver_number;
+                
+                if (!state.drivers[driverId]) {
+                    state.drivers[driverId] = {
+                        id: driverId,
+                        positions: [],
+                        name: `Driver ${driverId}`,
+                        acronym: `D${driverId}`,
+                        teamColor: '#999999',
+                        isFastest: false,
+                        lastLapTime: null
+                    };
+                }
+                
+                // Ajouter la nouvelle position
+                state.drivers[driverId].positions.push({
+                    x: pos.x,
+                    y: pos.y,
+                    date: pos.date,
+                    lap: pos.lap_number
+                });
+                
+                // Garder seulement les 50 dernières positions pour les trajectoires
+                if (state.drivers[driverId].positions.length > 50) {
+                    state.drivers[driverId].positions.shift();
+                }
+            });
+        }
+
+        // Mettre à jour l'affichage
+        function updateDisplay() {
+            // Effacer les éléments existants
+            elements.driversGroup.selectAll("*").remove();
+            elements.trajectoriesGroup.selectAll("*").remove();
+            
+            // Mettre à jour le classement
+            updateLeaderboard();
+            
+            // Dessiner chaque pilote
+            Object.values(state.drivers).forEach(driver => {
+                if (driver.positions.length === 0) return;
+                
+                const latestPos = driver.positions[driver.positions.length - 1];
+                const isFastest = driver.isFastest;
+                const size = isFastest ? config.fastestSize : config.driverSize;
+                
+                // Dessiner la trajectoire si activé
+                if (config.showTrajectories && driver.positions.length > 1) {
+                    const lineGenerator = d3.line()
+                        .x(d => d.x)
+                        .y(d => d.y);
+                    
+                    elements.trajectoriesGroup.append("path")
+                        .attr("d", lineGenerator(driver.positions))
+                        .attr("stroke", driver.teamColor)
+                        .attr("stroke-width", 2)
+                        .attr("fill", "none")
+                        .attr("opacity", 0.5);
+                }
+                
+                // Dessiner le marqueur du pilote
+                const driverGroup = elements.driversGroup.append("g")
+                    .attr("class", "driver-marker")
+                    .attr("transform", `translate(${latestPos.x},${latestPos.y})`);
+                
+                driverGroup.append("circle")
+                    .attr("r", size)
+                    .attr("fill", driver.teamColor)
+                    .attr("class", isFastest ? "fastest-lap" : "");
+                
+                driverGroup.append("text")
+                    .text(driver.acronym)
+                    .attr("text-anchor", "middle")
+                    .attr("dy", 4)
+                    .attr("fill", "#fff")
+                    .attr("font-size", 10)
+                    .attr("font-weight", "bold");
+            });
+        }
+
+        // Mettre à jour le classement
+        function updateLeaderboard() {
+            // Trier les pilotes par position (simplifié)
+            const sortedDrivers = Object.values(state.drivers)
+                .sort((a, b) => a.positions.length - b.positions.length);
+            
+            elements.leaderboardList.innerHTML = '';
+            
+            sortedDrivers.forEach((driver, index) => {
+                const driverEl = document.createElement("div");
+                driverEl.className = `flex items-center p-2 rounded ${driver.isFastest ? 'bg-purple-900' : 'bg-gray-700'}`;
+                driverEl.innerHTML = `
+                    <span class="w-6 text-center font-bold">${index + 1}</span>
+                    <div class="w-4 h-4 rounded-full mr-2" style="background:${driver.teamColor}"></div>
+                    <span class="flex-1 font-medium">${driver.acronym}</span>
+                    <span class="text-sm">${driver.lastLapTime || '--:--.---'}</span>
+                `;
+                elements.leaderboardList.appendChild(driverEl);
+            });
+        }
+
+        // Démarrer l'application
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

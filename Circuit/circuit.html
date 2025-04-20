@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 Car Tracker - OpenF1 API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #e10600;
+        }
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        input, button {
+            padding: 8px 12px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #e10600;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #b70500;
+        }
+        #track-container {
+            position: relative;
+            margin-top: 20px;
+            border: 2px solid #333;
+        }
+        #track {
+            background-color: #333;
+        }
+        #car {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: #e10600;
+            border-radius: 50%;
+            border: 2px solid white;
+            transform: translate(-6px, -6px);
+            display: none;
+        }
+        .info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>F1 Car Tracker - Point Unique</h1>
+    
+    <div class="controls">
+        <input type="number" id="sessionKey" placeholder="Session Key (ex: 9161)" value="9161">
+        <input type="number" id="driverNumber" placeholder="Driver Number (ex: 1)" value="1">
+        <input type="text" id="dateFrom" placeholder="Start Time (ex: 2023-09-16T13:03:35)">
+        <button id="loadData">Charger données</button>
+        <button id="playAnimation">Jouer</button>
+    </div>
+
+    <div class="info">
+        <p>Exemple : Session 9161 (Singapour 2023), Pilote 1 (Verstappen)</p>
+    </div>
+
+    <div id="track-container">
+        <!-- Image de fond optionnelle -->
+        <!-- <img id="track-img" src="singapore_track.png" style="display:none;"> -->
+        <canvas id="track" width="800" height="500"></canvas>
+        <div id="car"></div>
+    </div>
+
+    <script>
+        const sessionKeyInput = document.getElementById("sessionKey");
+        const driverNumberInput = document.getElementById("driverNumber");
+        const dateFromInput = document.getElementById("dateFrom");
+        const loadDataBtn = document.getElementById("loadData");
+        const playAnimationBtn = document.getElementById("playAnimation");
+        const trackCanvas = document.getElementById("track");
+        const ctx = trackCanvas.getContext("2d");
+        const carElement = document.getElementById("car");
+        // const trackImg = document.getElementById("track-img");
+
+        let carPositions = [];
+        let animationFrameId = null;
+        let currentFrame = 0;
+
+        // Charger les données
+        async function fetchCarData() {
+            const sessionKey = sessionKeyInput.value;
+            const driverNumber = driverNumberInput.value;
+            const dateFrom = dateFromInput.value;
+
+            if (!sessionKey || !driverNumber) {
+                alert("Session Key et Driver Number requis");
+                return;
+            }
+
+            let apiUrl = `https://api.openf1.org/v1/location?session_key=${sessionKey}&driver_number=${driverNumber}`;
+            if (dateFrom) {
+                apiUrl += `&date>${dateFrom}`;
+            }
+
+            try {
+                const response = await fetch(apiUrl);
+                carPositions = await response.json();
+
+                if (carPositions.length === 0) {
+                    alert("Aucune donnée trouvée");
+                    return;
+                }
+
+                normalizePositions();
+                initTrack();
+                carElement.style.display = "block";
+            } catch (error) {
+                console.error("Erreur:", error);
+                alert("Erreur API");
+            }
+        }
+
+        // Normaliser les positions
+        function normalizePositions() {
+            const xValues = carPositions.map(pos => pos.x);
+            const yValues = carPositions.map(pos => pos.y);
+
+            const minX = Math.min(...xValues);
+            const maxX = Math.max(...xValues);
+            const minY = Math.min(...yValues);
+            const maxY = Math.max(...yValues);
+
+            const scaleX = trackCanvas.width / (maxX - minX);
+            const scaleY = trackCanvas.height / (maxY - minY);
+            const scale = Math.min(scaleX, scaleY) * 0.9;
+
+            carPositions.forEach(pos => {
+                pos.normX = (pos.x - minX) * scale + 20;
+                pos.normY = (pos.y - minY) * scale + 20;
+            });
+        }
+
+        // Initialiser le canvas
+        function initTrack() {
+            ctx.clearRect(0, 0, trackCanvas.width, trackCanvas.height);
+            
+            // Si vous avez une image de piste :
+            // if (trackImg.complete) {
+            //     ctx.drawImage(trackImg, 0, 0, trackCanvas.width, trackCanvas.height);
+            // }
+            
+            // Dessiner un simple rectangle pour représenter la piste
+            ctx.fillStyle = "#333";
+            ctx.fillRect(0, 0, trackCanvas.width, trackCanvas.height);
+        }
+
+        // Animation
+        function playAnimation() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            currentFrame = 0;
+            animate();
+        }
+
+        function animate() {
+            if (currentFrame >= carPositions.length) {
+                currentFrame = 0;
+            }
+
+            const pos = carPositions[currentFrame];
+            carElement.style.left = `${pos.normX}px`;
+            carElement.style.top = `${pos.normY}px`;
+
+            currentFrame++;
+            animationFrameId = requestAnimationFrame(animate);
+        }
+
+        // Événements
+        loadDataBtn.addEventListener("click", fetchCarData);
+        playAnimationBtn.addEventListener("click", playAnimation);
+
+        // Charger l'image de fond si disponible
+        // trackImg.onload = function() {
+        //     ctx.drawImage(trackImg, 0, 0, trackCanvas.width, trackCanvas.height);
+        // };
+    </script>
+</body>
+</html>

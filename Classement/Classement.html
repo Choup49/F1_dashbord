@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Classement F1</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="Style/style_classement.css">
+  <script src="../Script/classement.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <h2>F1 Corus Dashboard</h2>
+      <ul>
+        <li><a href="#"><i class="fas fa-flag-checkered"></i> Classement</a></li>
+        <li><a href="#"><i class="fas fa-chart-line"></i> Statistiques</a></li>
+        <li><a href="#"><i class="fas fa-map-marked-alt"></i> Circuits</a></li>
+      </ul>
+    </div>
+    <div class="main-content">
+      <header>
+        <h1>Classement F1 - Saison Corus</h1>
+        <p>Suivez les performances et les écarts entre pilotes</p>
+      </header>
+      <div id="api-warning" class="api-warning" style="display: none;">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>Certaines données proviennent de notre cache local en raison des limites de l'API.</span>
+      </div>
+      <div class="controls">
+        <div class="control-group">
+          <label for="meeting-select">Grand Prix:</label>
+          <select id="meeting-select">
+            <option value="">Chargement...</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="session-select">Session:</label>
+          <select id="session-select" disabled>
+            <option value="">Sélectionnez d'abord un GP</option>
+          </select>
+        </div>
+        <button id="fetch-btn"><i class="fas fa-sync-alt"></i> Actualiser</button>
+      </div>
+      <div class="standings-container">
+        <div id="standings-content">
+          <p>Sélectionnez un Grand Prix et une session pour afficher le classement</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

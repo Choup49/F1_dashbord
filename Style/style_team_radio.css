@@ -1,0 +1,54 @@
+/* team-radio.css */
+.radio-item {
+  background: linear-gradient(145deg, rgba(40,40,40,0.9), rgba(30,30,30,0.95));
+  border-left: 4px solid var(--team-color);
+  border-radius: 8px;
+  padding: 18px;
+  margin-bottom: 15px;
+  transition: transform 0.3s;
+}
+
+.radio-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(225, 6, 0, 0.3);
+}
+
+.driver-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+
+.driver-number {
+  width: 30px;
+  height: 30px;
+  background: var(--team-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.driver-info {
+  flex-grow: 1;
+}
+
+.driver-name {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.team-name {
+  font-size: 0.9rem;
+  color: var(--f1-light);
+  opacity: 0.7;
+}
+
+.radio-time {
+  font-family: 'Orbitron', sans-serif;
+  color: var(--f1-yellow);
+  font-size: 0.9rem;
+}
+

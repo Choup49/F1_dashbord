@@ -1,0 +1,163 @@
+:root {
+    --primary: #e10600;
+    --secondary: #1e1e1e;
+    --text: #ffffff;
+    --background: #121212;
+    --card-bg: #1e1e1e;
+    --highlight: #333333;
+}
+
+[data-theme="light"] {
+    --primary: #e10600;
+    --secondary: #f4f4f4;
+    --text: #000000;
+    --background: #ffffff;
+    --card-bg: #f4f4f4;
+    --highlight: #dddddd;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--text);
+    transition: all 0.3s ease;
+}
+
+header {
+    background-color: var(--secondary);
+    padding: 1.5rem;
+    text-align: center;
+    border-bottom: 3px solid var(--primary);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo {
+    height: 40px;
+}
+
+.circuit-info {
+    margin-top: 1rem;
+}
+
+h1, h2, h3 {
+    color: var(--primary);
+}
+
+main {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.ai-commentary {
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.commentary-box {
+    background-color: var(--highlight);
+    padding: 1rem;
+    border-radius: 5px;
+    margin-top: 1rem;
+}
+
+.predictions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.top-predictions, .win-probability, .podium-probability {
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.drivers-list {
+    margin-top: 1rem;
+}
+
+.driver-card {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background-color: var(--highlight);
+    border-radius: 5px;
+}
+
+.driver-pos {
+    font-weight: bold;
+    margin-right: 1rem;
+    color: var(--primary);
+}
+
+.driver-name {
+    flex-grow: 1;
+}
+
+.driver-prob {
+    font-weight: bold;
+}
+
+canvas {
+    margin-top: 1rem;
+    width: 100% !important;
+    height: 300px !important;
+}
+
+.comparison {
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: var(--secondary);
+    margin-top: 2rem;
+}
+
+.theme-switch button {
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+    }
+    
+    .predictions-grid {
+        grid-template-columns: 1fr;
+    }
+}

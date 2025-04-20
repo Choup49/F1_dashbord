@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 Predictions AI - Grand Prix de Monaco</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <img src="assets/img/f1-logo.png" alt="F1 Logo" class="logo">
+            <h1>Prédictions du Grand Prix</h1>
+            <div class="theme-switch">
+                <button id="theme-toggle">🌓</button>
+            </div>
+        </div>
+        <div class="circuit-info">
+            <h2 id="circuit-name">Circuit de Monaco</h2>
+            <p id="race-date">28 Mai 2023</p>
+        </div>
+    </header>
+
+    <main>
+        <section class="ai-commentary">
+            <h3>Analyse de l'IA</h3>
+            <div class="commentary-box">
+                <p id="ai-comment">Verstappen est favori sur ce circuit avec une probabilité de victoire de 45%. Son expérience sur les circuits urbains et la performance de la RB19 en milieu de saison en font le principal candidat à la victoire.</p>
+            </div>
+        </section>
+
+        <section class="predictions-grid">
+            <div class="top-predictions">
+                <h3>Top 5 des Pilotes</h3>
+                <div class="drivers-list" id="top-drivers">
+                    <!-- Généré dynamiquement -->
+                </div>
+            </div>
+
+            <div class="win-probability">
+                <h3>Probabilités de Victoire</h3>
+                <canvas id="winChart"></canvas>
+            </div>
+
+            <div class="podium-probability">
+                <h3>Probabilités de Podium</h3>
+                <canvas id="podiumChart"></canvas>
+            </div>
+        </section>
+
+        <section class="comparison" id="comparison-section">
+            <h3>Comparaison avec les Résultats Réels</h3>
+            <div class="comparison-table">
+                <!-- Généré dynamiquement après la course -->
+            </div>
+            <button id="toggle-comparison" class="hidden">Afficher la comparaison</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>Données générées par F1 Predictions AI • Mis à jour le <span id="last-update">25/05/2023 14:30</span></p>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/charts.js"></script>
+</body>
+</html>

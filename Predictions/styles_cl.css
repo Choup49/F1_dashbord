@@ -1,0 +1,143 @@
+:root {
+    --primary-color: #e10600;
+    --text-color: #ffffff;
+    --bg-color: #121212;
+    --table-bg: #1e1e1e;
+    --table-header-bg: #2a2a2a;
+    --table-border: #333;
+    --row-even: #252525;
+    --row-odd: #1e1e1e;
+    --best-sector: #9c27b0;
+    --improved-sector: #4caf50;
+    --worse-sector: #f44336;
+    --gap-color: #aaaaaa;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+header h1 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.session-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: var(--table-bg);
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--table-border);
+}
+
+th {
+    background-color: var(--table-header-bg);
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+}
+
+tr:nth-child(even) {
+    background-color: var(--row-even);
+}
+
+tr:nth-child(odd) {
+    background-color: var(--row-odd);
+}
+
+tr:hover {
+    background-color: #333;
+}
+
+.best-sector {
+    color: var(--best-sector);
+    font-weight: bold;
+}
+
+.improved-sector {
+    color: var(--improved-sector);
+}
+
+.worse-sector {
+    color: var(--worse-sector);
+}
+
+.gap {
+    color: var(--gap-color);
+    font-size: 0.9em;
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 10px;
+    border-top: 1px solid #333;
+    font-size: 0.8rem;
+    color: #777;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    th, td {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+    
+    .session-info {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    th, td {
+        padding: 6px 8px;
+        font-size: 0.8rem;
+    }
+    
+    header h1 {
+        font-size: 1.5rem;
+    }
+}

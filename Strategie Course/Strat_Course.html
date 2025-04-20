@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stratégies de Course F1</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="../Style/default_style.css">
+  <link rel="stylesheet" href="..\Style\style_strategie_course.css">
+  <script src="../Script/strategie_course.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Stratégies de Course F1</h1>
+      <p>Analyse des stratégies de pneus des pilotes</p>
+    </header>
+
+    <div class="controls">
+      <div class="session-selector">
+        <select id="meeting-select">
+          <option value="">Chargement des Grands Prix...</option>
+        </select>
+        <select id="session-select" disabled>
+          <option value="">Sélectionnez d'abord un GP</option>
+        </select>
+        <button id="refresh-btn">
+          <i class="fas fa-sync-alt"></i> Actualiser
+        </button>
+      </div>
+      <div class="sort-options">
+        <button class="sort-btn active" data-sort="driver">
+          <i class="fas fa-user"></i> Par pilote
+        </button>
+        <button class="sort-btn" data-sort="stops">
+          <i class="fas fa-flag"></i> Par nombre d'arrêts
+        </button>
+      </div>
+    </div>
+
+    <div id="strategies-container" class="strategies-container">
+      <div class="loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Chargement des stratégies...</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
